@@ -1,30 +1,30 @@
-/* file teix_simple.c */
+/* file mymod.c */
 #include <R.h>
 #include <math.h>
 
-static double teix_simple_parms[10];
-#define L_m   teix_simple_parms[0]
-#define p_Am  teix_simple_parms[1]
-#define v     teix_simple_parms[2]
-#define k_J   teix_simple_parms[3]
-#define kap   teix_simple_parms[4]
-#define T_A   teix_simple_parms[5]
-#define T_ref teix_simple_parms[6]
-#define T_b   teix_simple_parms[7]
-#define E_G   teix_simple_parms[8]
-#define f_slope teix_simple_parms[9]
+static double parms[10];
+#define L_m   parms[0]
+#define p_Am  parms[1]
+#define v     parms[2]
+#define k_J   parms[3]
+#define kap   parms[4]
+#define T_A   parms[5]
+#define T_ref parms[6]
+#define T_b   parms[7]
+#define E_G   parms[8]
+#define f_slope parms[9]
 /* #define f_intercept parms[10] */
 
 
 /* initializer  */
-void init_teix_simple(void (* odeparms)(int *, double *))
+void initmod(void (* odeparms)(int *, double *))
 {
   int N=10;
-  odeparms(&N, teix_simple_parms);
+  odeparms(&N, parms);
 }
 
 /* Derivatives and 2 output variable */
-void d_teix_simple (int *neq, double *t, double *y, double *ydot,
+void derivs (int *neq, double *t, double *y, double *ydot,
              double *yout, int *ip)
 {
   if (ip[0] <1) error("nout should be at least 1");
@@ -58,6 +58,7 @@ void d_teix_simple (int *neq, double *t, double *y, double *ydot,
     ydot[1] = pT_Am * f_n * pow(L, 2) - pT_C; //dE
     ydot[2] = rT * L/3; //dL
     ydot[3] = -f_slope; //df_n
+    ydot[4] = -1.37e-3; //dwdratio
 
     /* limit the functional response to >= 0 */
 
@@ -65,7 +66,7 @@ void d_teix_simple (int *neq, double *t, double *y, double *ydot,
            ydot[3] = 0;
 
     /* calculate derived quantities: culmen length and dry weight */
-      yout[0] = y[2]*1.074;
+      yout[0] = y[2]/1.074;
 
     //# #wet weight. this is all hard coded now, should not be!
       static const double w_E = 23.9; // # molecular weight of reserve g mol^-1
@@ -79,5 +80,6 @@ void d_teix_simple (int *neq, double *t, double *y, double *ydot,
        */
       //double wdratio = -1.37e-3 * *t + 2.09;
       double omega = p_Am * w_E / (v * d_v * mu_E);
-      yout[1] = pow(y[2], 3) * (1 + y[4] * omega) * d_v;
+      yout[1] = pow(y[2], 3) * (1 + y[3] * omega) * d_v *y[4];
 }
+/* END file mymod.c */
