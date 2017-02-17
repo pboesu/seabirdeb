@@ -1,9 +1,8 @@
 #load and format data and parameter sets from Teixeira paper
 library(R.matlab)
-library(deSolve)
 
 #load and reshape parameter estimates etc from Teixeira model
-ode_pars <- readMat('~/../Dropbox/USFpostdoc/WALB_DEB/data/ode_pars.mat')[[1]]
+ode_pars <- readMat('data-raw/ode_pars.mat')[[1]]
 names(ode_pars) <- sub("\\.", "_", dimnames(ode_pars)[[1]])
 times <- as.vector(ode_pars['a'][[1]])
 pars <- unlist(ode_pars[c(6:16)])
@@ -14,7 +13,7 @@ params = pars
 params['f_slope'] <- -params['f_slope']
 
 #load data
-obs_table <- read.csv('~/bitbucket/walb_deb/data/teixeira2014tab02.csv', skip=4)
+obs_table <- read.csv('data-raw/teixeira2014tab02.csv', skip=4)
 #rename to match model output
 names(obs_table) <- c("time", "Ww", "L_cul", "TBW", "wdratio")
 #change units to g
