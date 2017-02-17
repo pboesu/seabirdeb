@@ -1,0 +1,11 @@
+#Table 7.
+#        Comparison between the scaled functional response (f) expected values<comma> obtained through the estimated function after applying DEB theory and fitting observed body mass variation<comma> and the ratio between the amount of food ingested per surface unit of the organism<comma> at each sampled moment (X/L2)<comma> and the same measurement at the adult stage (X∞/L2∞).
+Age.d,Food.provided.gd−1,Culmen.length.cm,X.L2,X.L2.Xinf.L2inf,f
+55,991.83,9.26,11.57,1.49,0.96
+85,977.00,11.49,7.4,0.95,0.9
+115,1011.23,13.52,5.53,0.71,0.84
+145,849.78,15.05,3.75,0.48,0.78
+175,848.70,16.02,3.31,0.43,0.72
+205,796.68,16.42,2.95,0.38,0.66
+235,496.14,16.46,1.83,0.24,0.60
+Adult,2100.00,16.46,7.75,1,0.8

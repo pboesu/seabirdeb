@@ -1,0 +1,23 @@
+#Table 2.
+#       Univariate data collected throughout the Wandering Albatross chick growing period in Île de la Possession (Crozet archipelago) (sexes combined). TBW corresponds to the Total Body Water.
+#Lequette and Weimerskirch (1990)(n = 31),Mabille et al. (2004)(n = 10)
+#Age (d),Body mass (kg),Culmen length (cm),Absolute TBW (L),Wet weight/dry weight
+Age.d,Mass.kg,Culmen.length.cm,absTBW.L,WwDw
+10,1.07,5.09,NA,NA
+25,2.58,6.70,NA,NA
+40,3.89,8.01,2.12,2.02
+55,5.33,9.26,NA,NA
+70,6.45,10.49,3.74,1.98
+85,7.82,11.49,NA,NA
+100,8.83,12.62,5.06,1.99
+115,9.68,13.52,NA,NA
+130,10.77,14.38,5.42,1.89
+145,11.28,15.05,NA,NA
+160,11.87,15.59,5.85,1.88
+175,11.72,16.02,NA,NA
+190,12.38,16.26,5.89,1.84
+205,11.91,16.42,NA,NA
+220,12.16,16.44,5.57,1.77
+235,11.43,16.46,NA,NA
+250,10.93,16.46,NA,NA
+264,10.05,16.46,NA,NA
