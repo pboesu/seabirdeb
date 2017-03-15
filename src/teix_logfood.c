@@ -1,4 +1,4 @@
-/* file mymod.c */
+/* file teix_logfood.c */
 #include <R.h>
 #include <math.h>
 

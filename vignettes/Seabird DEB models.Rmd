@@ -1,0 +1,68 @@
+---
+title: "Seabird DEB models"
+author: "Philipp Boersch-Supan"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+Sanity test of C fnuctions
+
+## Dependencies
+
+We load all the necessary packages
+
+```{r dependencies}
+library(deSolve)
+library(seabirdeb)
+```
+
+## A set of test parameters and initial values, and the corresponding WALB observations
+
+```{r params}
+#parameters
+params <- structure(c(26.62883424, 725.266318774218, 0.029349082, 2.7486143e-07, 
+0.9991795, 15000, 293, 312.6, 13072.691, 0.0019625396, 1.0659367
+), .Names = c("L_m", "p_Am", "v", "k_J", "kap", "T_A", "T_ref", 
+"T_b", "E_G", "f_slope", "f_intercept"))
+#initial values
+states <- structure(c(2360.0575, 2756519.34779998, 5.18548469520595, 1.0659367000002
+), .Names = c("H", "E", "L", "f_n"))
+#time array
+times <- c(-1e-10, 0:700)
+
+#observations (really this should be packaged data)
+obs_long <- structure(list(variable = structure(c(1L, 1L, 1L, 1L, 1L, 1L, 
+1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 2L, 2L, 2L, 2L, 
+2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 3L, 3L, 
+3L, 3L, 3L, 3L, 3L, 3L, 3L, 3L, 3L, 3L, 3L, 3L, 3L, 3L, 3L, 3L, 
+4L, 4L, 4L, 4L, 4L, 4L, 4L, 4L, 4L, 4L, 4L, 4L, 4L, 4L, 4L, 4L, 
+4L, 4L), .Label = c("Ww", "L_cul", "TBW", "wdratio"), class = "factor"), 
+    time = c(10L, 25L, 40L, 55L, 70L, 85L, 100L, 115L, 130L, 
+    145L, 160L, 175L, 190L, 205L, 220L, 235L, 250L, 264L, 10L, 
+    25L, 40L, 55L, 70L, 85L, 100L, 115L, 130L, 145L, 160L, 175L, 
+    190L, 205L, 220L, 235L, 250L, 264L, 10L, 25L, 40L, 55L, 70L, 
+    85L, 100L, 115L, 130L, 145L, 160L, 175L, 190L, 205L, 220L, 
+    235L, 250L, 264L, 10L, 25L, 40L, 55L, 70L, 85L, 100L, 115L, 
+    130L, 145L, 160L, 175L, 190L, 205L, 220L, 235L, 250L, 264L
+    ), value = c(1070, 2580, 3890, 5330, 6450, 7820, 8830, 9680, 
+    10770, 11280, 11870, 11720, 12380, 11910, 12160, 11430, 10930, 
+    10050, 5.09, 6.7, 8.01, 9.26, 10.49, 11.49, 12.62, 13.52, 
+    14.38, 15.05, 15.59, 16.02, 16.26, 16.42, 16.44, 16.46, 16.46, 
+    16.46, NA, NA, 2.12, NA, 3.74, NA, 5.06, NA, 5.42, NA, 5.85, 
+    NA, 5.89, NA, 5.57, NA, NA, NA, NA, NA, 2.02, NA, 1.98, NA, 
+    1.99, NA, 1.89, NA, 1.88, NA, 1.84, NA, 1.77, NA, NA, NA)), .Names = c("variable", 
+"time", "value"), class = "data.frame", row.names = c(NA, -72L
+))
+
+```
+
+
+
+## Calling the C functions
+
+```{r}
+```
