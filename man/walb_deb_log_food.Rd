@@ -19,4 +19,3 @@ derivatives of the ODE
 \description{
 Teixeira albatross model with logistic food in nestling stage
 }
-

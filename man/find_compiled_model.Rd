@@ -15,4 +15,3 @@ Find the path to the compiled models
 \examples{
 find_compiled_model()
 }
-
