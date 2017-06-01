@@ -2,7 +2,7 @@
 #include <R.h>
 #include <math.h>
 
-static double parms[10];
+static double parms[11];
 #define L_m   parms[0]
 #define p_Am  parms[1]
 #define v     parms[2]
@@ -12,14 +12,15 @@ static double parms[10];
 #define T_ref parms[6]
 #define T_b   parms[7]
 #define E_G   parms[8]
-#define f_slope parms[9]
+#define f_lower parms[9]
+#define f_rate parms[10]
 /* #define f_intercept parms[10] */
 
 
 /* initializer  */
 void init_logfood(void (* odeparms)(int *, double *))
 {
-  int N=10;
+  int N=11;
   odeparms(&N, parms);
 }
 
@@ -42,9 +43,9 @@ void d_logfood (int *neq, double *t, double *y, double *ydot,
     #define L   y[2]
     #define f_n y[3]
     #define wdratio y[4]
-    const double lAsym = 0.8;
-    const double uAsym = 1.75;
-    const double rate = -0.038;
+    //const double lAsym = 0.8;
+    const double uAsym = 1;
+    //const double rate = -0.038;
     const double xmid = 85.14;
 
     E_m = p_Am/ v; //#% J/cm^3, reserve capacity [E_m]
@@ -62,7 +63,7 @@ void d_logfood (int *neq, double *t, double *y, double *ydot,
     ydot[0] = (1 - kap) * pT_C - kT_J * H; // dH J
     ydot[1] = pT_Am * f_n * pow(L, 2) - pT_C; //dE
     ydot[2] = rT * L/3; //dL
-    ydot[3] = rate * exp(-rate * ( *t - xmid)) * (uAsym - lAsym)/ pow((1 + exp( -rate * ( *t - xmid))), 2); //df_n
+    ydot[3] = f_rate * exp(-f_rate * ( *t - xmid)) * (uAsym - f_lower)/ pow((1 + exp( -f_rate * ( *t - xmid))), 2); //df_n
     ydot[4] = -1.37e-3; //dwdratio
 
     /* limit the functional response to >= 0 */

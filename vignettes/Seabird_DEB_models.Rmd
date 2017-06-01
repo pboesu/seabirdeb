@@ -74,7 +74,7 @@ plot(out, obs=obs_long, which = 1:6)
 states_wd <- c(states, wdratio = 2.09)
 system.time(out2 <- ode(states_wd, times, func = "derivs", parms = params[1:10], dllname = "seabirdeb", initfunc = "initmod", nout = 2, outnames = c("L_cul", "Ww")))
 plot(out2, obs=obs_long, which = 1:7)
-system.time(out3 <- ode(states_wd, times, func = "d_logfood", parms = params[1:10], dllname = "seabirdeb", initfunc = "init_logfood", nout = 2, outnames = c("L_cul", "Ww")))
+system.time(out3 <- ode(states_wd, times, func = "d_logfood", parms = c(params[1:9], f_lower = 0.6, f_rate = -0.038), dllname = "seabirdeb", initfunc = "init_logfood", nout = 2, outnames = c("L_cul", "Ww")))
 plot(out3, obs=obs_long, which = 1:7)
 dyn.unload(find_compiled_model())
 
