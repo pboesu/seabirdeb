@@ -69,6 +69,7 @@ dyn.load(find_compiled_model())
 getNativeSymbolInfo("init_teix_simple", "seabirdeb")#these should be unit tests
 getNativeSymbolInfo("initmod", "seabirdeb")
 getNativeSymbolInfo("init_logfood", "seabirdeb")
+getNativeSymbolInfo("init_teix_simple_full_life", "seabirdeb")
 system.time(out <- ode(states, times, func = "d_teix_simple", parms = params[1:10], dllname = "seabirdeb", initfunc = "init_teix_simple", nout = 2, outnames = c("L_cul", "Ww")))
 plot(out, obs=obs_long, which = 1:6)
 states_wd <- c(states, wdratio = 2.09)
@@ -80,6 +81,13 @@ states_logfood <- states_wd
 states_logfood['f_n'] = 1
 system.time(out3 <- ode(states_wd, times, func = "d_logfood", parms = c(params[1:9], f_lower = 0.6, f_rate = -0.038), dllname = "seabirdeb", initfunc = "init_logfood", nout = 2, outnames = c("L_cul", "Ww")))
 plot(out3, obs=obs_long, which = c(1:7))
-dyn.unload(find_compiled_model())
 
+
+#full life cycle model
+system.time(out <- ode(states, times, func = "d_teix_simple_full_life", parms = c(params[1:10], t_x = 300, L_m_a = 17.8, f_a = 0.8) , dllname = "seabirdeb", initfunc = "init_teix_simple_full_life", nout = 2, outnames = c("L_cul", "Ww")))
+plot(out, obs=obs_long, which = 1:6)
+
+
+#unload compiled models
+dyn.unload(find_compiled_model())
 ```
