@@ -84,8 +84,15 @@ plot(out3, obs=obs_long, which = c(1:7))
 
 
 #full life cycle model
-system.time(out <- ode(states, times, func = "d_teix_simple_full_life", parms = c(params[1:10], t_x = 300, L_m_a = 17.8, f_a = 0.8) , dllname = "seabirdeb", initfunc = "init_teix_simple_full_life", nout = 2, outnames = c("L_cul", "Ww")))
-plot(out, obs=obs_long, which = 1:6)
+
+#calculate wdratio for adults
+
+
+
+#reset functional response via event
+eventdat <- data.frame(var = c("f_n", "wdratio"), time = c(264, 264), value = c(0.8, 1.88), method = c("rep", "rep"))
+system.time(out <- ode(states_wd, times, func = "d_teix_simple_full_life", parms = c(params[1:10], t_x = 264, L_m_a = 17.8, f_a = 0.8) , dllname = "seabirdeb", initfunc = "init_teix_simple_full_life", nout = 2, outnames = c("L_cul", "Ww"), events = list(data = eventdat)))
+plot(out, obs=obs_long, which = 1:7)
 
 
 #unload compiled models

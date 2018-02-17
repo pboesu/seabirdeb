@@ -39,7 +39,9 @@ void d_teix_simple_full_life (int *neq, double *t, double *y, double *ydot,
     double pT_Am;
     double e;
     double rT;
+    double rT_a;
     double pT_C;
+    double pT_C_a;
     #define H   y[0]
     #define E   y[1]
     #define L   y[2]
@@ -54,28 +56,33 @@ void d_teix_simple_full_life (int *neq, double *t, double *y, double *ydot,
     pT_Am = p_Am * TC;
     e = vT * E/ pow(L, 3)/ pT_Am; //#% -, scaled reserve density;
     rT = vT * (e/ L - 1/ L_m)/ (e + g); //#% 1/d, spec growth rate
+    rT_a = vT * (e/ L - 1/ L_m_a)/ (e + g); //#% 1/d, spec growth rate post-fledging
     pT_C = E * (vT/ L - rT); //#% J/d, scaled mobilisation
+    pT_C_a = E * (vT/ L - rT_a); //#% J/d, scaled mobilisation post fledging
 
     /* derivatives */
+
+    if (*t < t_x){
     ydot[0] = (1 - kap) * pT_C - kT_J * H; // dH J
     ydot[1] = pT_Am * f_n * pow(L, 2) - pT_C; //dE
     ydot[2] = rT * L/3; //dL
-    if (*t < t_x){
     ydot[3] = -f_slope; //df_n
+    ydot[4] = -1.37e-3; //dwdratio
     } else {
-      ydot[3] = 0; //df_n
+    ydot[0] = (1 - kap) * pT_C_a - kT_J * H; // dH J
+    ydot[1] = pT_Am * f_n * pow(L, 2) - pT_C_a; //dE
+    ydot[2] = rT_a * L/3; //dL
+    ydot[3] = 0; //df_n
+    ydot[4] = 0; //dwdratio assume constant wdratio after fledging
     }
 
     /* limit the functional response to >= 0 */
 
-      if(y[3] < 0 & *t < t_x)
+      if(y[3] < 0)
            ydot[3] = 0;
 
-      if(*t >= t_x)
-        y[3] = f_a;
-
     /* calculate derived quantities: culmen length and dry weight */
-      yout[0] = y[2]*1.074;
+      yout[0] = y[2]/1.074;
 
     //# #wet weight. this is all hard coded now, should not be!
       static const double w_E = 23.9; // # molecular weight of reserve g mol^-1
