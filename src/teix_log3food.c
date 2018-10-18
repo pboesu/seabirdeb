@@ -75,7 +75,7 @@ void d_log3food (int *neq, double *t, double *y, double *ydot,
            ydot[3] = 0;
 
     /* calculate derived quantities: culmen length and dry weight */
-      yout[0] = y[2]/1.074;
+      yout[0] = y[2]/1.074; //TODO: this must not be hardcoded
 
     //# #wet weight. this is all hard coded now, should not be!
       static const double w_E = 23.9; // # molecular weight of reserve g mol^-1
