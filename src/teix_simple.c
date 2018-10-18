@@ -69,7 +69,7 @@ void d_teix_simple (int *neq, double *t, double *y, double *ydot,
 
     //# #wet weight. this is all hard coded now, should not be!
       static const double w_E = 23.9; // # molecular weight of reserve g mol^-1
-      static const double d_v = 0.5; // # specific density of structure
+      static const double d_v = 0.28; // # specific density of structure
       static const double mu_E = 550000; // # chemical potential of reserve J / mol
       /* since I can't quite figure out the way to multiply in time-dependent wdratios,
        * we are sticking to dry weight instead

@@ -1,33 +1,32 @@
-/* file teix_simple_full_life.c */
+/* file teix_log3food.c */
 #include <R.h>
 #include <math.h>
 
-static double teix_simple_parms[13];
-#define L_m   teix_simple_parms[0] //chick maximum structural length
-#define p_Am  teix_simple_parms[1]
-#define v     teix_simple_parms[2]
-#define k_J   teix_simple_parms[3]
-#define kap   teix_simple_parms[4]
-#define T_A   teix_simple_parms[5]
-#define T_ref teix_simple_parms[6]
-#define T_b   teix_simple_parms[7]
-#define E_G   teix_simple_parms[8]
-#define f_slope teix_simple_parms[9]
-#define t_x teix_simple_parms[10] // age at fledging (since birth)
-#define L_m_a teix_simple_parms[11] //adult maximum structural length
-#define f_a teix_simple_parms[12] // adult functional response
+static double parms[12];
+#define L_m   parms[0]
+#define p_Am  parms[1]
+#define v     parms[2]
+#define k_J   parms[3]
+#define kap   parms[4]
+#define T_A   parms[5]
+#define T_ref parms[6]
+#define T_b   parms[7]
+#define E_G   parms[8]
+#define f_lower parms[9]
+#define f_rate parms[10]
+#define f_mid parms[11]
 /* #define f_intercept parms[10] */
 
 
 /* initializer  */
-void init_teix_simple_full_life(void (* odeparms)(int *, double *))
+void init_log3food(void (* odeparms)(int *, double *))
 {
-  int N=13;
-  odeparms(&N, teix_simple_parms);
+  int N=12;
+  odeparms(&N, parms);
 }
 
 /* Derivatives and 2 output variable */
-void d_teix_simple_full_life (int *neq, double *t, double *y, double *ydot,
+void d_log3food (int *neq, double *t, double *y, double *ydot,
              double *yout, int *ip)
 {
   if (ip[0] <1) error("nout should be at least 1");
@@ -39,14 +38,16 @@ void d_teix_simple_full_life (int *neq, double *t, double *y, double *ydot,
     double pT_Am;
     double e;
     double rT;
-    double rT_a;
     double pT_C;
-    double pT_C_a;
     #define H   y[0]
     #define E   y[1]
     #define L   y[2]
     #define f_n y[3]
     #define wdratio y[4]
+    //const double lAsym = 0.8;
+    const double uAsym = 1;
+    //const double rate = -0.038;
+    //const double xmid = 85.14;
 
     E_m = p_Am/ v; //#% J/cm^3, reserve capacity [E_m]
     g = E_G/ kap/ E_m; //#% -, energy investment ratio
@@ -56,25 +57,15 @@ void d_teix_simple_full_life (int *neq, double *t, double *y, double *ydot,
     pT_Am = p_Am * TC;
     e = vT * E/ pow(L, 3)/ pT_Am; //#% -, scaled reserve density;
     rT = vT * (e/ L - 1/ L_m)/ (e + g); //#% 1/d, spec growth rate
-    rT_a = vT * (e/ L - 1/ L_m_a)/ (e + g); //#% 1/d, spec growth rate post-fledging
     pT_C = E * (vT/ L - rT); //#% J/d, scaled mobilisation
-    pT_C_a = E * (vT/ L - rT_a); //#% J/d, scaled mobilisation post fledging
+
 
     /* derivatives */
-
-    if (*t < t_x){
     ydot[0] = (1 - kap) * pT_C - kT_J * H; // dH J
     ydot[1] = pT_Am * f_n * pow(L, 2) - pT_C; //dE
     ydot[2] = rT * L/3; //dL
-    ydot[3] = -f_slope; //df_n
+    ydot[3] = f_rate * exp(-f_rate * ( *t - f_mid)) * (uAsym - f_lower)/ pow((1 + exp( -f_rate * ( *t - f_mid))), 2); //df_n
     ydot[4] = -1.37e-3; //dwdratio
-    } else {
-    ydot[0] = (1 - kap) * pT_C_a - kT_J * H; // dH J
-    ydot[1] = pT_Am * f_n * pow(L, 2) - pT_C_a; //dE
-    ydot[2] = rT_a * L/3; //dL
-    ydot[3] = 0; //df_n
-    ydot[4] = 0; //dwdratio assume constant wdratio after fledging
-    }
 
     /* limit the functional response to >= 0 */
 
@@ -96,5 +87,6 @@ void d_teix_simple_full_life (int *neq, double *t, double *y, double *ydot,
        */
       //double wdratio = -1.37e-3 * *t + 2.09;
       double omega = p_Am * w_E / (v * d_v * mu_E);
-      yout[1] = pow(y[2], 3) * (1 + y[4] * omega) * d_v;
+      yout[1] = pow(y[2], 3) * (1 + y[3] * omega) * d_v *y[4];
 }
+/* END file mymod.c */
