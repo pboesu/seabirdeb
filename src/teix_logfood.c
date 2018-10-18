@@ -56,6 +56,8 @@ void d_logfood (int *neq, double *t, double *y, double *ydot,
     pT_Am = p_Am * TC;
     e = vT * E/ pow(L, 3)/ pT_Am; //#% -, scaled reserve density;
     rT = vT * (e/ L - 1/ L_m)/ (e + g); //#% 1/d, spec growth rate
+    if(rT < 0)
+      rT = 0; //#ensure there is no negative growth
     pT_C = E * (vT/ L - rT); //#% J/d, scaled mobilisation
 
 
