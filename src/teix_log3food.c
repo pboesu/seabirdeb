@@ -2,7 +2,7 @@
 #include <R.h>
 #include <math.h>
 
-static double parms[12];
+static double parms[13];
 #define L_m   parms[0]
 #define p_Am  parms[1]
 #define v     parms[2]
@@ -15,13 +15,14 @@ static double parms[12];
 #define f_lower parms[9]
 #define f_rate parms[10]
 #define f_mid parms[11]
+#define delta_M parms[12]
 /* #define f_intercept parms[10] */
 
 
 /* initializer  */
 void init_log3food(void (* odeparms)(int *, double *))
 {
-  int N=12;
+  int N=13;
   odeparms(&N, parms);
 }
 
@@ -75,7 +76,7 @@ void d_log3food (int *neq, double *t, double *y, double *ydot,
            ydot[3] = 0;
 
     /* calculate derived quantities: culmen length and dry weight */
-      yout[0] = y[2]/1.074; //TODO: this must not be hardcoded
+      yout[0] = y[2]/delta_M; //TODO: this must not be hardcoded
 
     //# #wet weight. this is all hard coded now, should not be!
       static const double w_E = 23.9; // # molecular weight of reserve g mol^-1
