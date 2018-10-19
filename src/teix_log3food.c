@@ -2,7 +2,7 @@
 #include <R.h>
 #include <math.h>
 
-static double parms[13];
+static double parms[14];
 #define L_m   parms[0]
 #define p_Am  parms[1]
 #define v     parms[2]
@@ -16,13 +16,14 @@ static double parms[13];
 #define f_rate parms[10]
 #define f_mid parms[11]
 #define delta_M parms[12]
+#define wdratio_slope parms[13]
 /* #define f_intercept parms[10] */
 
 
 /* initializer  */
 void init_log3food(void (* odeparms)(int *, double *))
 {
-  int N=13;
+  int N=14;
   odeparms(&N, parms);
 }
 
@@ -68,7 +69,7 @@ void d_log3food (int *neq, double *t, double *y, double *ydot,
     ydot[1] = pT_Am * f_n * pow(L, 2) - pT_C; //dE
     ydot[2] = rT * L/3; //dL
     ydot[3] = f_rate * exp(-f_rate * ( *t - f_mid)) * (uAsym - f_lower)/ pow((1 + exp( -f_rate * ( *t - f_mid))), 2); //df_n
-    ydot[4] = -1.37e-3; //dwdratio
+    ydot[4] = wdratio_slope; //-1.37e-3; //dwdratio
 
     /* limit the functional response to >= 0 */
 
