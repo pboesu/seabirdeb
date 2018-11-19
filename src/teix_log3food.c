@@ -94,8 +94,10 @@ void d_log3food (int *neq, double *t, double *y, double *ydot,
       yout[1] = pow(y[2], 3) * (1 + y[3] * omega) * d_v *y[4];
       //# # output the difference between mobilisation flux on reproduction branch and maturity maintenance
       yout[2] = (1 - kap) * pT_C - kT_J * H;
-      //# # output the difference between mobilisation flux on somatic branch and somatic maintenance
-      yout[3] = kap * pT_C - kap * pow(L / L_m, 3);
+      //# # oscaled somatic maintenance
+      yout[3] =  kap * pow((L / L_m), 3);
+      // mobilisation
+      yout[4] =  pT_C;
 
 }
 /* END file mymod.c */

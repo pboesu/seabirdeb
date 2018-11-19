@@ -1,0 +1,105 @@
+---
+title: "Albatross DEB models with a functional response following a 3-parameter logistic curve"
+author: "Philipp Boersch-Supan"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+Sanity test of C functions
+
+## Dependencies
+
+We load all the necessary packages
+
+```{r dependencies}
+library(deSolve)
+library(seabirdeb)
+```
+
+## A set of test parameters and initial values, and the corresponding WALB observations
+
+```{r params}
+#parameters
+params <- structure(c(26.62883424, 725.266318774218, 0.029349082, 2.7486143e-07, 
+0.9991795, 15000, 293, 312.6, 13072.691, 0.0019625396, 1.0659367
+), .Names = c("L_m", "p_Am", "v", "k_J", "kap", "T_A", "T_ref", 
+"T_b", "E_G", "f_slope", "f_intercept"))
+#initial values
+states <- structure(c(2360.0575, 2756519.34779998, 5.18548469520595, 1.0659367000002
+), .Names = c("H", "E", "L", "f_n"))
+#time array
+times <- c(-1e-10, 0:700)
+
+#observations (really this should be packaged data)
+obs_long <- structure(list(variable = structure(c(1L, 1L, 1L, 1L, 1L, 1L, 
+1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 2L, 2L, 2L, 2L, 
+2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 3L, 3L, 
+3L, 3L, 3L, 3L, 3L, 3L, 3L, 3L, 3L, 3L, 3L, 3L, 3L, 3L, 3L, 3L, 
+4L, 4L, 4L, 4L, 4L, 4L, 4L, 4L, 4L, 4L, 4L, 4L, 4L, 4L, 4L, 4L, 
+4L, 4L), .Label = c("Ww", "L_cul", "TBW", "wdratio"), class = "factor"), 
+    time = c(10L, 25L, 40L, 55L, 70L, 85L, 100L, 115L, 130L, 
+    145L, 160L, 175L, 190L, 205L, 220L, 235L, 250L, 264L, 10L, 
+    25L, 40L, 55L, 70L, 85L, 100L, 115L, 130L, 145L, 160L, 175L, 
+    190L, 205L, 220L, 235L, 250L, 264L, 10L, 25L, 40L, 55L, 70L, 
+    85L, 100L, 115L, 130L, 145L, 160L, 175L, 190L, 205L, 220L, 
+    235L, 250L, 264L, 10L, 25L, 40L, 55L, 70L, 85L, 100L, 115L, 
+    130L, 145L, 160L, 175L, 190L, 205L, 220L, 235L, 250L, 264L
+    ), value = c(1070, 2580, 3890, 5330, 6450, 7820, 8830, 9680, 
+    10770, 11280, 11870, 11720, 12380, 11910, 12160, 11430, 10930, 
+    10050, 5.09, 6.7, 8.01, 9.26, 10.49, 11.49, 12.62, 13.52, 
+    14.38, 15.05, 15.59, 16.02, 16.26, 16.42, 16.44, 16.46, 16.46, 
+    16.46, NA, NA, 2.12, NA, 3.74, NA, 5.06, NA, 5.42, NA, 5.85, 
+    NA, 5.89, NA, 5.57, NA, NA, NA, NA, NA, 2.02, NA, 1.98, NA, 
+    1.99, NA, 1.89, NA, 1.88, NA, 1.84, NA, 1.77, NA, NA, NA)), .Names = c("variable", 
+"time", "value"), class = "data.frame", row.names = c(NA, -72L
+))
+
+
+```
+
+
+
+## Calling the C functions
+
+```{r fig.width = 8, fig.height=8}
+dyn.load(find_compiled_model())
+getNativeSymbolInfo("init_teix_simple", "seabirdeb")#these should be unit tests
+getNativeSymbolInfo("initmod", "seabirdeb")
+getNativeSymbolInfo("init_logfood", "seabirdeb")
+getNativeSymbolInfo("init_teix_simple_full_life", "seabirdeb")
+system.time(out <- ode(states, times, func = "d_teix_simple", parms = params[1:10], dllname = "seabirdeb", initfunc = "init_teix_simple", nout = 2, outnames = c("L_cul", "Ww")))
+plot(out, obs=obs_long, which = 1:6)
+states_wd <- c(states, wdratio = 2.09)
+
+
+system.time(out2 <- ode(states_wd, seq(0,300), func = "derivs", parms = params[1:10], dllname = "seabirdeb", initfunc = "initmod", nout = 2, outnames = c("L_cul", "Ww")))
+plot(out2, obs=obs_long, which = c(4,1:3))
+states_logfood <- states_wd
+states_logfood['f_n'] = 1
+system.time(out3 <- ode(states_wd, times, func = "d_logfood", parms = c(params[1:9], f_lower = 0.6, f_rate = -0.038), dllname = "seabirdeb", initfunc = "init_logfood", nout = 2, outnames = c("L_cul", "Ww")))
+plot(out3, obs=obs_long, which = c(1:7))
+
+
+getNativeSymbolInfo("init_scaled_log3food", "seabirdeb")
+system.time(out4 <- ode(c(e = 1, l = 0.3, uH = 5, uR = 0, f  = 1, wdratio = 2.09), times, func = "d_scaled_log3food", parms = c(params[1:9], f_lower = 0.6, f_rate = -0.038, fmid = 120, delta_M = 1, wdratio_slope=-1.37e-3 , E_Hb = 5, E_Hp = 20), dllname = "seabirdeb", initfunc = "init_scaled_log3food", nout = 2, outnames = c("L_cul", "Ww")))
+plot(out4)
+
+#full life cycle model
+
+#calculate wdratio for adults
+
+
+
+#reset functional response via event
+eventdat <- data.frame(var = c("f_n", "wdratio"), time = c(264, 264), value = c(0.8, 1.88), method = c("rep", "rep"))
+system.time(out <- ode(states_wd, times, func = "d_teix_simple_full_life", parms = c(params[1:10], t_x = 264, L_m_a = 17.8, f_a = 0.8) , dllname = "seabirdeb", initfunc = "init_teix_simple_full_life", nout = 2, outnames = c("L_cul", "Ww"), events = list(data = eventdat)))
+plot(out, obs=obs_long, which = 1:7)
+
+
+#unload compiled models
+dyn.unload(find_compiled_model())
+```
